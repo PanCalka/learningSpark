@@ -109,7 +109,7 @@ object MovieSimilarities {
        ratingY = pair._2
       numPairs +=1
     }
-    val score =  ratingX - ratingY
+    val score =  Math.abs(ratingX - ratingY)
 
     (score, numPairs)
   }
