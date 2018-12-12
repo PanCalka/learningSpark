@@ -85,6 +85,34 @@ object MovieSimilarities {
     
     return (score, numPairs)
   }
+  def computeEuclidesSimilarity(ratingPair: RatingPairs): (Double, Int) = {
+    var numPairs:Int = 0
+    var ratingX = 0.0
+    var ratingY = 0.0
+
+    for (pair <- ratingPair) {
+       ratingX = pair._1
+       ratingY = pair._2
+      numPairs +=1
+    }
+    val score = sqrt(ratingX * ratingX - ratingY* ratingY)
+
+    (score, numPairs)
+  }
+  def computeManhattanSimilarity(ratingPair: RatingPairs): (Double, Int) = {
+    var numPairs:Int = 0
+    var ratingX = 0.0
+    var ratingY = 0.0
+
+    for (pair <- ratingPair) {
+       ratingX = pair._1
+       ratingY = pair._2
+      numPairs +=1
+    }
+    val score =  ratingX - ratingY
+
+    (score, numPairs)
+  }
   
   /** Our main function where the action happens */
   def main(args: Array[String]) {
@@ -122,8 +150,13 @@ object MovieSimilarities {
     val moviePairRatings = moviePairs.groupByKey()
 
     // We now have (movie1, movie2) = > (rating1, rating2), (rating1, rating2) ...
-    // Can now compute similarities.
-    val moviePairSimilarities = moviePairRatings.mapValues(computeCosineSimilarity).cache()
+    // Can now compute cosinus similarities.
+    //val moviePairSimilarities = moviePairRatings.mapValues(computeCosineSimilarity).cache()
+    // euclides similarity
+    //val moviePairSimilarities = moviePairRatings.mapValues(computeEuclidesSimilarity).cache()
+    //city similarity(manhatan)
+    val moviePairSimilarities = moviePairRatings.mapValues(computeManhattanSimilarity).cache()
+
     
     //Save the results if desired
     //val sorted = moviePairSimilarities.sortByKey()
@@ -133,7 +166,7 @@ object MovieSimilarities {
     
     if (args.length > 0) {
       val scoreThreshold = 0.97
-      val coOccurenceThreshold = 50.0
+      val coOccurenceThreshold = 70.0
       
       val movieID:Int = args(0).toInt
       
